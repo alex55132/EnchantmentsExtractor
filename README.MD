@@ -1,4 +1,5 @@
 # Enchantment Extractor
+![Image](EnchantmentsExtractor.png)
 Enchantment Extractor is, as its name says, a plugin for extracting enchantment from items.
 Swords, Axes, Shovels, Armor... Almost everything that is enchanted can have its enchantments extracted!
 ## Installation
