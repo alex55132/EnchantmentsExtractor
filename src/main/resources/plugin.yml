@@ -8,3 +8,4 @@ commands:
 permissions:
   enchantmentsextractor.disenchant:
     description: Permission that allows the player to use the disenchant command
+soft-depend: [Vault]

@@ -17,6 +17,7 @@ import java.util.Map;
 
 
 public class Commands implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String nombreComando, String[] args) {
 
@@ -39,19 +40,6 @@ public class Commands implements CommandExecutor {
                     //Get the inventory content
                     ItemStack[] items = playerInv.getContents();
 
-                    int materialAmount = 0;
-
-                    //TODO: SUPPORT FOR CUSTOM MATERIALS?
-                    Material payMaterial = Material.DIAMOND;
-
-                    for (int i = 0; i < items.length; i++) {
-                        ItemStack item = items[i];
-
-                        if (item != null && item.getType() == payMaterial) {
-                            materialAmount += item.getAmount();
-                        }
-                    }
-
                     //Boolean to check if the player can pay the disenchant
                     boolean allEnchantsRemoved = true;
 
@@ -63,10 +51,72 @@ public class Commands implements CommandExecutor {
                             Enchantment enchantment = entry.getKey();
                             int level = entry.getValue();
 
-                            int materialCost = level + 1;
+                            //Boolean to check if the extraction is available after the payment
+                            boolean paymentCompleted = false;
 
-                            //Check if the player can pay the
-                            if ((materialCost <= materialAmount)) {
+                            if(Main.isEconomyEnabled) {
+                                double disenchantPrice = Main.plugin.getConfig().getDouble("disenchantPrice");
+
+                                //Check if the user has the money to pay the disenchantment
+                                if (Main.econ.has(p, disenchantPrice)) {
+                                    Main.econ.withdrawPlayer(p, disenchantPrice);
+                                    paymentCompleted = true;
+                                } else {
+                                    allEnchantsRemoved = false;
+                                }
+                            } else {
+                                int materialAmount = 0;
+
+                                Material payMaterial = Material.DIAMOND;
+
+                                for (int i = 0; i < items.length; i++) {
+                                    ItemStack item = items[i];
+
+                                    if (item != null && item.getType() == payMaterial) {
+                                        materialAmount += item.getAmount();
+                                    }
+                                }
+
+                                int materialCost = level + 1;
+                                //Check if the player can pay the disenchant with materials
+                                if ((materialCost <= materialAmount)) {
+                                    //Take the pay material out of the player
+                                    boolean paid = false;
+                                    int slotCounter = 0;
+                                    int materialPayRemaining = materialCost;
+
+                                    while (!paid && (slotCounter < items.length)) {
+                                        ItemStack item = items[slotCounter];
+                                        //Check if there is the payMaterial in that slot
+                                        if (item != null && item.getType() == payMaterial) {
+
+                                            int amountInSlot = item.getAmount();
+
+                                            //If the amount of materials in the slot is superior to the amount of money to pay delete the materials and break the loop
+                                            if (amountInSlot > materialPayRemaining) {
+                                                amountInSlot -= materialPayRemaining;
+
+                                                item.setAmount(amountInSlot);
+
+                                                paid = true;
+                                            } else {
+                                                materialPayRemaining -= amountInSlot;
+                                                item.setAmount(0);
+                                            }
+                                        }
+
+                                        slotCounter++;
+                                    }
+
+                                    paymentCompleted = true;
+
+                                    enchantmentsCounter--;
+                                } else {
+                                    allEnchantsRemoved = false;
+                                }
+                            }
+
+                            if(paymentCompleted) {
                                 //Remove the enchantment from the item
                                 itemInMainHand.removeEnchantment(enchantment);
 
@@ -85,38 +135,6 @@ public class Commands implements CommandExecutor {
                                 enchantedBook.setItemMeta(meta);
                                 //Drop the item
                                 p.getWorld().dropItem(p.getLocation(), enchantedBook);
-
-                                //Take the pay material out of the player
-                                boolean paid = false;
-                                int slotCounter = 0;
-                                int materialPayRemaining = materialCost;
-
-                                while (!paid && (slotCounter < items.length)) {
-                                    ItemStack item = items[slotCounter];
-                                    //Check if there is the payMaterial in that slot
-                                    if (item != null && item.getType() == payMaterial) {
-
-                                        int amountInSlot = item.getAmount();
-
-                                        //If the amount of materials in the slot is superior to the amount of money to pay delete the materials and break the loop
-                                        if (amountInSlot > materialPayRemaining) {
-                                            amountInSlot -= materialPayRemaining;
-
-                                            item.setAmount(amountInSlot);
-
-                                            paid = true;
-                                        } else {
-                                            materialPayRemaining -= amountInSlot;
-                                            item.setAmount(0);
-                                        }
-                                    }
-
-                                    slotCounter++;
-                                }
-
-                                enchantmentsCounter--;
-                            } else {
-                                allEnchantsRemoved = false;
                             }
                         }
 
