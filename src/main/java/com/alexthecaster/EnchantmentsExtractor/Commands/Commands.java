@@ -67,7 +67,15 @@ public class Commands implements CommandExecutor {
                             } else {
                                 int materialAmount = 0;
 
-                                Material payMaterial = Material.DIAMOND;
+                                String materialString = Main.plugin.getConfig().getString("materialPayment");
+
+                                Material payMaterial = Material.getMaterial(materialString);
+
+                                if(payMaterial == null) {
+                                    //If not material found use the default
+                                    payMaterial = Material.DIAMOND;
+                                }
+
 
                                 for (int i = 0; i < items.length; i++) {
                                     ItemStack item = items[i];
@@ -77,7 +85,19 @@ public class Commands implements CommandExecutor {
                                     }
                                 }
 
-                                int materialCost = level + 1;
+                                //Get the custom price if set
+                                int materialBasePrice = Main.plugin.getConfig().getInt("materialCustomPrice.basePrice");
+                                int perLevelPrice = Main.plugin.getConfig().getInt("materialCustomPrice.perLevelPrice");
+
+                                int materialCost = 0;
+
+                                //If custom prices are set, use them, if not, use the default
+                                if(materialBasePrice > -1 && perLevelPrice > -1) {
+                                    materialCost = materialBasePrice + (perLevelPrice * level);
+                                } else {
+                                    materialCost = level + 1;
+                                }
+
                                 //Check if the player can pay the disenchant with materials
                                 if ((materialCost <= materialAmount)) {
                                     //Take the pay material out of the player
@@ -146,11 +166,11 @@ public class Commands implements CommandExecutor {
                             //No enchantment was extracted, the operation failed
                             if (enchantmentsCounter == enchantmentsSize) {
                                 p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                        ChatColor.GREEN + " No enchantments were extracted. Check if you have enough material for it!");
+                                        ChatColor.GREEN + " No enchantments were extracted. Check if you have enough material/money for it!");
                             } else {
                                 //Some enchantments were extracted
                                 p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                        ChatColor.GREEN + " Some enchantments were not extracted! Do you have enough material?");
+                                        ChatColor.GREEN + " Some enchantments were not extracted! Do you have enough material/money?");
                             }
                         }
 
@@ -164,7 +184,7 @@ public class Commands implements CommandExecutor {
                 }
 
             } else {
-                Main.plugin.getServer().broadcastMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
+               sender.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
                         ChatColor.GREEN + "This is not a console command!");
             }
 

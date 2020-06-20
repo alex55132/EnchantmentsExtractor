@@ -1,2 +1,11 @@
+#If true the plugin uses the Vault integration if installed
 economyEnabled: true
+#Price that a disenchant cost with the Vault integration
 disenchantPrice: 15
+#If the Vault integration is disabled, use this material as payment. Note: If bad format or material not found, the plugin uses the default (DIAMOND)
+materialPayment: DIAMOND
+#Custom price for material-based payments. If its < 0 the plugin will use the default values (1 for enchantment level + 1)
+materialCustomPrice:
+  basePrice: -1
+  #Per level price enchantment
+  perLevelPrice: -1
