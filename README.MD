@@ -10,6 +10,9 @@ diamonds in your inventory, because you will need them to pay the operation!
 ### How does the extraction work?
 The extraction requires diamonds to work, so the plugin calculates how much an extraction costs assuming 
 every level of the enchantment cost 1 diamond. So extract Power II from a sword would cost 2 diamonds, Power IV would cost 4 diamonds and so on...
+
+Since **1.2** now you can add custom materials to pay with and you can customize how much do you want your users to pay
+for the extracion.
 ## Permissions
 - enchantmentsextractor.disenchant: Allows the user to use the /disenchant command
 ## TODO:
