@@ -16,6 +16,7 @@ every level of the enchantment cost 1 diamond. So extract Power II from a sword 
 
 - Custom materials payment (Not only diamonds ;))
 - ~~Vault integration (For using money instead of materials)~~ Implemented in 1.1 :)
+- Port to as much previous versions as I can
 
 ## Support:
 
