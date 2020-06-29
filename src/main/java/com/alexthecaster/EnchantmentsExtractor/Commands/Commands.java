@@ -27,7 +27,7 @@ public class Commands implements CommandExecutor {
                 Player p = (Player) sender;
                 //Check for permission
                 if (p.hasPermission("enchantmentsextractor.disenchant")) {
-                    ItemStack itemInMainHand = p.getInventory().getItemInMainHand();
+                    ItemStack itemInMainHand = p.getInventory().getItemInHand();
 
                     Map<Enchantment, Integer> enchantments = itemInMainHand.getEnchantments();
 
@@ -129,8 +129,6 @@ public class Commands implements CommandExecutor {
                                     }
 
                                     paymentCompleted = true;
-
-                                    enchantmentsCounter--;
                                 } else {
                                     allEnchantsRemoved = false;
                                 }
@@ -155,6 +153,8 @@ public class Commands implements CommandExecutor {
                                 enchantedBook.setItemMeta(meta);
                                 //Drop the item
                                 p.getWorld().dropItem(p.getLocation(), enchantedBook);
+
+                                enchantmentsCounter--;
                             }
                         }
 
