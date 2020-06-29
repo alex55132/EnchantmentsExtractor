@@ -20,8 +20,29 @@ for the extracion.
 - ~~Custom materials payment (Not only diamonds ;))~~ Implemented in 1.2
 - ~~Custom price for the extractions~~ Implemented in 1.2
 - ~~Vault integration (For using money instead of materials)~~ Implemented in 1.1 :)
-- Port to as much previous versions as I can
 
+## Previous versions support
+
+Since this is a very simple plugin, I want to code it for as much versions as requested. Obviously, this is very
+hard in practise, so this list will be about the supported minecraft versions the plugin can work with:
+
+Legend:
+ - Supported: ✅ 
+ - Not supported: ❌ 
+ - In development: 🕐 
+ 
+Minecraft server versions:
+ - 1.15: ✅ 
+ - 1.14: ❌
+ - 1.13: ❌
+ - 1.12: ❌
+ - 1.11: ❌
+ - 1.10: ❌
+ - 1.9: ❌
+ - 1.8: ✅ 
+ - 1.7: ❌
+ 
+**Note**: If you want to get the plugin ported to a version feel free to contact me in the plugin spigot page
 ## Support:
 
 Having trouble with the plugin? Found a bug? Have a suggestion? Feel free to open an Issue on this repository so I can add new things to the plugin :)
