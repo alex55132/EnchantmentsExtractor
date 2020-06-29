@@ -39,7 +39,7 @@ Minecraft server versions:
  - 1.11: ❌
  - 1.10: ❌
  - 1.9: ❌
- - 1.8: 🕐 
+ - 1.8: ✅ 
  - 1.7: ❌
  
 **Note**: If you want to get the plugin ported to a version feel free to contact me in the plugin spigot page
