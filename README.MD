@@ -30,7 +30,7 @@ hard in practise, so this list will be about the supported minecraft versions th
 
 Legend:
  - Supported: ✅ 
- - Not supported: ❌ 
+ - Not supported/No tested: ❌ 
  - In development: 🕐 
  
 Minecraft server versions:
