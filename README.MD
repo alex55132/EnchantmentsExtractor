@@ -20,6 +20,7 @@ for the extracion.
 - ~~Custom materials payment (Not only diamonds ;))~~ Implemented in 1.2
 - ~~Custom price for the extractions~~ Implemented in 1.2
 - ~~Vault integration (For using money instead of materials)~~ Implemented in 1.1 :)
+- Add support for non vanilla enchantment plugins (Referred in [#2](https://github.com/alex55132/EnchantmentsExtractor/issues/2))
 - Ingame prices editor
 
 ## Previous versions support

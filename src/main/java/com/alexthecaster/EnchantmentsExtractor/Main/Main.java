@@ -1,7 +1,7 @@
 package com.alexthecaster.EnchantmentsExtractor.Main;
 
-import com.alexthecaster.EnchantmentsExtractor.Commands.Commands;
 
+import com.alexthecaster.EnchantmentsExtractor.Commands.Commands;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
