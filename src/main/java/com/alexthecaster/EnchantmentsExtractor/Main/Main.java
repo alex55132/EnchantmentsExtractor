@@ -11,6 +11,7 @@ public class Main extends JavaPlugin {
     public static Main plugin;
     public static Economy econ = null;
     public static boolean isEconomyEnabled = false;
+    public static boolean isEnchantmentSolutionEnabled = false;
 
     @Override
     public void onEnable() {
@@ -32,6 +33,13 @@ public class Main extends JavaPlugin {
                     return;
                 }
             }
+
+            isEnchantmentSolutionEnabled = plugin.getServer().getPluginManager().isPluginEnabled("EnchantmentSolution");
+
+            if (isEnchantmentSolutionEnabled) {
+                plugin.getLogger().info("ES integration enabled");
+            }
+
 
         } catch (NullPointerException exception) {
             plugin.getLogger().severe("An error ocurred while initializing");

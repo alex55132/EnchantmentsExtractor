@@ -53,9 +53,13 @@ public class Commands implements CommandExecutor {
 
                             //Boolean to check if the extraction is available after the payment
                             boolean paymentCompleted = false;
+                            double disenchantPrice = 0;
+                            String materialString = "";
+                            Material payMaterial = Material.AIR;
+                            int materialCost = 0;
 
-                            if(Main.isEconomyEnabled) {
-                                double disenchantPrice = Main.plugin.getConfig().getDouble("disenchantPrice");
+                            if (Main.isEconomyEnabled) {
+                                disenchantPrice = Main.plugin.getConfig().getDouble("disenchantPrice");
 
                                 //Check if the user has the money to pay the disenchantment
                                 if (Main.econ.has(p, disenchantPrice)) {
@@ -67,11 +71,11 @@ public class Commands implements CommandExecutor {
                             } else {
                                 int materialAmount = 0;
 
-                                String materialString = Main.plugin.getConfig().getString("materialPayment");
+                                materialString = Main.plugin.getConfig().getString("materialPayment");
 
-                                Material payMaterial = Material.getMaterial(materialString);
+                                payMaterial = Material.getMaterial(materialString);
 
-                                if(payMaterial == null) {
+                                if (payMaterial == null) {
                                     //If not material found use the default
                                     payMaterial = Material.DIAMOND;
                                 }
@@ -89,10 +93,8 @@ public class Commands implements CommandExecutor {
                                 int materialBasePrice = Main.plugin.getConfig().getInt("materialCustomPrice.basePrice");
                                 int perLevelPrice = Main.plugin.getConfig().getInt("materialCustomPrice.perLevelPrice");
 
-                                int materialCost = 0;
-
                                 //If custom prices are set, use them, if not, use the default
-                                if(materialBasePrice > -1 && perLevelPrice > -1) {
+                                if (materialBasePrice > -1 && perLevelPrice > -1) {
                                     materialCost = materialBasePrice + (perLevelPrice * level);
                                 } else {
                                     materialCost = level + 1;
@@ -136,25 +138,86 @@ public class Commands implements CommandExecutor {
                                 }
                             }
 
-                            if(paymentCompleted) {
+                            boolean isCustomEnchant = false;
+
+                            if (paymentCompleted) {
                                 //Remove the enchantment from the item
-                                itemInMainHand.removeEnchantment(enchantment);
 
-                                //Create the enchanted book item
-                                ItemStack enchantedBook = new ItemStack(Material.ENCHANTED_BOOK);
+                                //Check if is it an enchantment from EnchantmentSolution (Soft-depend)
+                                if (Main.isEnchantmentSolutionEnabled) {
+                                    org.ctp.enchantmentsolution.enchantments.CustomEnchantment customEnchant = org.ctp.enchantmentsolution.enchantments.RegisterEnchantments.getCustomEnchantment(enchantment);
 
-                                ItemMeta meta = enchantedBook.getItemMeta();
+                                    //Check if the enchant is a custom one
+                                    if (customEnchant != null) {
+                                        isCustomEnchant = true;
 
-                                //Get the enchantmentStorageMeta
-                                if (meta instanceof EnchantmentStorageMeta) {
-                                    //Add the enchantment to the item meta
-                                    EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) meta;
-                                    enchantmentStorageMeta.addStoredEnchant(enchantment, level, false);
+                                        try {
+                                            //This is working in ES 2.3. Remove the enchantment
+                                            org.ctp.enchantmentsolution.utils.items.ItemUtils.removeEnchantmentFromItem(itemInMainHand, customEnchant);
+
+                                        } catch (Exception ex) {
+                                            //If an error happens in the process (Probably because of an update) cancel all the process, and return the money/items used
+                                            p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
+                                                    ChatColor.GREEN + "An error happened while performing the extraction. This is likely to be because of the ES plugin. If the problem" +
+                                                    " persist, open an Issue in the EnchantmentsExtractor github.");
+
+                                            allEnchantsRemoved = false;
+
+                                            if (Main.isEconomyEnabled) {
+                                                Main.econ.depositPlayer(p, disenchantPrice);
+                                            } else {
+                                                ItemStack itemStackDrop = new ItemStack(payMaterial, materialCost);
+                                                p.getWorld().dropItem(p.getLocation(), itemStackDrop);
+                                            }
+                                        }
+                                    }
                                 }
-                                //Give the meta to the item
-                                enchantedBook.setItemMeta(meta);
-                                //Drop the item
-                                p.getWorld().dropItem(p.getLocation(), enchantedBook);
+
+                                if (!isCustomEnchant) {
+                                    //Is not custom, so proceed the normal way
+                                    itemInMainHand.removeEnchantment(enchantment);
+
+                                    //Create the enchanted book item
+                                    ItemStack enchantedBook = new ItemStack(Material.ENCHANTED_BOOK);
+
+                                    ItemMeta meta = enchantedBook.getItemMeta();
+
+                                    //Get the enchantmentStorageMeta
+                                    if (meta instanceof EnchantmentStorageMeta) {
+                                        //Add the enchantment to the item meta
+                                        EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) meta;
+                                        enchantmentStorageMeta.addStoredEnchant(enchantment, level, false);
+                                    }
+                                    //Give the meta to the item
+                                    enchantedBook.setItemMeta(meta);
+                                    //Drop the item
+                                    p.getWorld().dropItem(p.getLocation(), enchantedBook);
+                                } else {
+                                    //Is a custom enchant, so it cannot be returned. Because of that, drop items instead in return. Default set from config.
+                                    String returnMaterial = Main.plugin.getConfig().getString("materialESReturn");
+                                    Material returnItem;
+                                    ItemStack returnItemStack;
+
+                                    //Check if the material is valid
+                                    if (returnMaterial != null) {
+                                        returnItem = Material.getMaterial(returnMaterial);
+                                    } else {
+                                        returnItem = Material.DIAMOND;
+                                    }
+
+                                    //Check if the amount is valid
+                                    int itemAmount = Main.plugin.getConfig().getInt("materialESReturnAmount");
+
+                                    if (itemAmount != 0) {
+                                        returnItemStack = new ItemStack(returnItem, itemAmount);
+                                    } else {
+                                        //Default is 1
+                                        returnItemStack = new ItemStack(returnItem, 1);
+                                    }
+
+                                    //Drop the item
+                                    p.getWorld().dropItem(p.getLocation(), returnItemStack);
+                                }
                             }
                         }
 
@@ -184,7 +247,7 @@ public class Commands implements CommandExecutor {
                 }
 
             } else {
-               sender.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
+                sender.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
                         ChatColor.GREEN + "This is not a console command!");
             }
 

@@ -9,3 +9,7 @@ materialCustomPrice:
   basePrice: -1
   #Per level price enchantment
   perLevelPrice: -1
+#Item in return if ES enchantment is extracted. Note: If bad format or material not found, the plugin uses the default (DIAMOND)
+materialESReturn: DIAMOND
+#Default amount of items returned in case of an ES extraction
+materialESReturnAmount: 1
