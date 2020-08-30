@@ -55,6 +55,6 @@ Do you want to extend the plugin functionality? Great! In this section I'll expl
 work, so let's begin!
 
 The [VaultAPI](https://github.com/MilkBowl/VaultAPI) is used in order to enable the Economy usage. 
-[EnchantmentSolution](https://www.spigotmc.org/resources/enchantment-solution.59556/) plugin is needed too in order to enable the ES support. It's needed for the sake of development.
+[EnchantmentSolution](https://www.spigotmc.org/resources/enchantment-solution.59556/) plugin is needed too in order to enable the ES support.
 
 VaultAPI and Spigot API is available through Maven (See pom.xml). Nevertheless, to install the ES plugin you need to download the .jar and add it to the project as an external library. 
