@@ -13,15 +13,16 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.Map;
 
 
 public class Commands implements CommandExecutor {
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String nombreComando, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String commandName, String[] args) {
 
-        if (nombreComando.equalsIgnoreCase("disenchant")) {
+        if (commandName.equalsIgnoreCase("disenchant")) {
 
             if (sender instanceof Player) {
                 Player p = (Player) sender;
@@ -139,13 +140,15 @@ public class Commands implements CommandExecutor {
                             }
 
                             boolean isCustomEnchant = false;
+                            //Define the customEnchant variable for later assignation and usage
+                            org.ctp.enchantmentsolution.enchantments.CustomEnchantment customEnchant = null;
 
                             if (paymentCompleted) {
                                 //Remove the enchantment from the item
 
                                 //Check if is it an enchantment from EnchantmentSolution (Soft-depend)
                                 if (Main.isEnchantmentSolutionEnabled) {
-                                    org.ctp.enchantmentsolution.enchantments.CustomEnchantment customEnchant = org.ctp.enchantmentsolution.enchantments.RegisterEnchantments.getCustomEnchantment(enchantment);
+                                    customEnchant = org.ctp.enchantmentsolution.enchantments.RegisterEnchantments.getCustomEnchantment(enchantment);
 
                                     //Check if the enchant is a custom one
                                     if (customEnchant != null) {
@@ -172,51 +175,58 @@ public class Commands implements CommandExecutor {
                                         }
                                     }
                                 }
-
                                 if (!isCustomEnchant) {
                                     //Is not custom, so proceed the normal way
                                     itemInMainHand.removeEnchantment(enchantment);
+                                }
 
-                                    //Create the enchanted book item
-                                    ItemStack enchantedBook = new ItemStack(Material.ENCHANTED_BOOK);
+                                //Create the enchanted book item
+                                ItemStack enchantedBook = new ItemStack(Material.ENCHANTED_BOOK);
 
-                                    ItemMeta meta = enchantedBook.getItemMeta();
+                                ItemMeta meta = enchantedBook.getItemMeta();
 
-                                    //Get the enchantmentStorageMeta
-                                    if (meta instanceof EnchantmentStorageMeta) {
-                                        //Add the enchantment to the item meta
-                                        EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) meta;
-                                        enchantmentStorageMeta.addStoredEnchant(enchantment, level, false);
+                                //Get the enchantmentStorageMeta
+                                if (meta instanceof EnchantmentStorageMeta) {
+                                    //Add the enchantment to the item meta
+                                    EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) meta;
+                                    enchantmentStorageMeta.addStoredEnchant(enchantment, level, false);
+                                }
+                                //Give the meta to the item
+                                enchantedBook.setItemMeta(meta);
+                                //Drop the item
+                                p.getWorld().dropItem(p.getLocation(), enchantedBook);
+
+
+                                ItemMeta itemMainHandMeta = itemInMainHand.getItemMeta();
+
+                                //Only process the lore if is not null. This is for avoid the keeping of the item lore when the disenchant is complete
+                                if(itemMainHandMeta.hasLore()) {
+                                    List<String> lore = itemMainHandMeta.getLore();
+                                    boolean lookingForEnchantmentName = true;
+                                    int counter = 0;
+
+                                    //Remove the enchantment name from the item
+                                    try {
+                                        while (lookingForEnchantmentName && counter < lore.size()) {
+                                            try {
+                                                if (customEnchant.getDisplayName() == lore.get(counter)) {
+                                                    //Remove the line where the enchantment name is set
+                                                    lore.remove(counter);
+                                                    lookingForEnchantmentName = false;
+                                                }
+
+                                                counter++;
+                                            } catch (Exception ex) {
+                                                //If exception just keep searching in the lore.
+                                                counter++;
+                                            }
+                                        }
+                                    } catch (Exception ex) {
+                                        //Don't do anything
                                     }
-                                    //Give the meta to the item
-                                    enchantedBook.setItemMeta(meta);
-                                    //Drop the item
-                                    p.getWorld().dropItem(p.getLocation(), enchantedBook);
-                                } else {
-                                    //Is a custom enchant, so it cannot be returned. Because of that, drop items instead in return. Default set from config.
-                                    String returnMaterial = Main.plugin.getConfig().getString("materialESReturn");
-                                    Material returnItem;
-                                    ItemStack returnItemStack;
 
-                                    //Check if the material is valid
-                                    if (returnMaterial != null) {
-                                        returnItem = Material.getMaterial(returnMaterial);
-                                    } else {
-                                        returnItem = Material.DIAMOND;
-                                    }
-
-                                    //Check if the amount is valid
-                                    int itemAmount = Main.plugin.getConfig().getInt("materialESReturnAmount");
-
-                                    if (itemAmount != 0) {
-                                        returnItemStack = new ItemStack(returnItem, itemAmount);
-                                    } else {
-                                        //Default is 1
-                                        returnItemStack = new ItemStack(returnItem, 1);
-                                    }
-
-                                    //Drop the item
-                                    p.getWorld().dropItem(p.getLocation(), returnItemStack);
+                                    itemMainHandMeta.setLore(lore);
+                                    itemInMainHand.setItemMeta(itemMainHandMeta);
                                 }
                             }
                         }
