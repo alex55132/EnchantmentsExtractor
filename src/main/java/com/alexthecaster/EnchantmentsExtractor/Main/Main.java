@@ -2,6 +2,7 @@ package com.alexthecaster.EnchantmentsExtractor.Main;
 
 
 import com.alexthecaster.EnchantmentsExtractor.Commands.Commands;
+import com.alexthecaster.EnchantmentsExtractor.Utils.UpdateChecker;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,6 +40,10 @@ public class Main extends JavaPlugin {
             if (isEnchantmentSolutionEnabled) {
                 plugin.getLogger().info("ES integration enabled");
             }
+
+            UpdateChecker checker = new UpdateChecker(this, 80315);
+
+            checker.getLastReleasedVersion(checker::generateUpdateMessage);
 
 
         } catch (NullPointerException exception) {
