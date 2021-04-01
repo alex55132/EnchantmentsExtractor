@@ -139,46 +139,11 @@ public class Commands implements CommandExecutor {
                                 }
                             }
 
-                            boolean isCustomEnchant = false;
-                            //Define the customEnchant variable for later assignation and usage
-                            org.ctp.enchantmentsolution.enchantments.CustomEnchantment customEnchant = null;
-
                             if (paymentCompleted) {
                                 //Remove the enchantment from the item
 
-                                //Check if is it an enchantment from EnchantmentSolution (Soft-depend)
-                                if (Main.isEnchantmentSolutionEnabled) {
-                                    customEnchant = org.ctp.enchantmentsolution.enchantments.RegisterEnchantments.getCustomEnchantment(enchantment);
+                                itemInMainHand.removeEnchantment(enchantment);
 
-                                    //Check if the enchant is a custom one
-                                    if (customEnchant != null) {
-                                        isCustomEnchant = true;
-
-                                        try {
-                                            //This is working in ES 2.3. Remove the enchantment
-                                            org.ctp.enchantmentsolution.utils.items.ItemUtils.removeEnchantmentFromItem(itemInMainHand, customEnchant);
-
-                                        } catch (Exception ex) {
-                                            //If an error happens in the process (Probably because of an update) cancel all the process, and return the money/items used
-                                            p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                                    ChatColor.GREEN + "An error happened while performing the extraction. This is likely to be because of the ES plugin. If the problem" +
-                                                    " persist, open an Issue in the EnchantmentsExtractor github.");
-
-                                            allEnchantsRemoved = false;
-
-                                            if (Main.isEconomyEnabled) {
-                                                Main.econ.depositPlayer(p, disenchantPrice);
-                                            } else {
-                                                ItemStack itemStackDrop = new ItemStack(payMaterial, materialCost);
-                                                p.getWorld().dropItem(p.getLocation(), itemStackDrop);
-                                            }
-                                        }
-                                    }
-                                }
-                                if (!isCustomEnchant) {
-                                    //Is not custom, so proceed the normal way
-                                    itemInMainHand.removeEnchantment(enchantment);
-                                }
 
                                 //Create the enchanted book item
                                 ItemStack enchantedBook = new ItemStack(Material.ENCHANTED_BOOK);
@@ -196,69 +161,37 @@ public class Commands implements CommandExecutor {
                                 //Drop the item
                                 p.getWorld().dropItem(p.getLocation(), enchantedBook);
 
-
-                                ItemMeta itemMainHandMeta = itemInMainHand.getItemMeta();
-
-                                //Only process the lore if is not null. This is for avoid the keeping of the item lore when the disenchant is complete
-                                if(itemMainHandMeta.hasLore()) {
-                                    List<String> lore = itemMainHandMeta.getLore();
-                                    boolean lookingForEnchantmentName = true;
-                                    int counter = 0;
-
-                                    //Remove the enchantment name from the item
-                                    try {
-                                        while (lookingForEnchantmentName && counter < lore.size()) {
-                                            try {
-                                                if (customEnchant.getDisplayName() == lore.get(counter)) {
-                                                    //Remove the line where the enchantment name is set
-                                                    lore.remove(counter);
-                                                    lookingForEnchantmentName = false;
-                                                }
-
-                                                counter++;
-                                            } catch (Exception ex) {
-                                                //If exception just keep searching in the lore.
-                                                counter++;
-                                            }
-                                        }
-                                    } catch (Exception ex) {
-                                        //Don't do anything
-                                    }
-
-                                    itemMainHandMeta.setLore(lore);
-                                    itemInMainHand.setItemMeta(itemMainHandMeta);
-                                }
                             }
                         }
 
                         //Get the final message
                         if (allEnchantsRemoved) {
                             p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                    ChatColor.GREEN + "Enchantments extracted!");
+                                    ChatColor.GREEN +  Main.plugin.getConfig().getString(Main.languageMessagesString + "EnchantmentExtractionSucess"));
                         } else {
                             //No enchantment was extracted, the operation failed
                             if (enchantmentsCounter == enchantmentsSize) {
                                 p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                        ChatColor.GREEN + " No enchantments were extracted. Check if you have enough material/money for it!");
+                                        ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "NoEnchantmentExtracted"));
                             } else {
                                 //Some enchantments were extracted
                                 p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                        ChatColor.GREEN + " Some enchantments were not extracted! Do you have enough material/money?");
+                                        ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "SomeEnchantmentExtracted"));
                             }
                         }
 
                     } else {
                         p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                ChatColor.GREEN + "The current item doesn't have any enchantment!");
+                                ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "NoEnchantmentInItem"));
                     }
                 } else {
                     p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                            ChatColor.GREEN + "You dont have permissions to use this command!");
+                            ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "NoPermissionMessage"));
                 }
 
             } else {
                 sender.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                        ChatColor.GREEN + "This is not a console command!");
+                        ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "ConsoleError"));
             }
 
             return true;
