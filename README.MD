@@ -23,6 +23,7 @@ for the extracion.
 - ~~Add support for non vanilla enchantment plugins (Referred in [#2](https://github.com/alex55132/EnchantmentsExtractor/issues/2))~~ Implemented in 1.3
 - ~~Custom messages~~ Implemented in 1.4
 - ~~Multi-language support~~ Implemented in 1.4
+-  Failsafe for when trying to extract non-vanilla enchants (Referred in [#4](https://github.com/alex55132/EnchantmentsExtractor/issues/4))
 - Ingame prices editor
 
 ## Previous versions support
