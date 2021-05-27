@@ -13,7 +13,7 @@ messages:
   #Selected language
   language: eng
   eng:
-    EnchantmentExtractionSucess: Enchantments extracted!
+    EnchantmentExtractionSuccess: Enchantments extracted!
     NoEnchantmentExtracted: No enchantments were extracted. Check if you have enough material/money for it!
     SomeEnchantmentExtracted: Some enchantments were not extracted! Do you have enough material/money?
     NoEnchantmentInItem: The current item doesn't have any enchantment!
@@ -21,8 +21,9 @@ messages:
     ConsoleError: This is not a console command!
     UpdateAvailableMessage: There is a new update available.
     NoUpdateAvailableMessage: There is not a new update available.
+    InvalidEnchantmentLevel: Invalid enchantment level (Are you disenchanting vanilla enchantments?)
   esp:
-    EnchantmentExtractionSucess: Encantamientos extraidos!
+    EnchantmentExtractionSuccess: Encantamientos extraidos!
     NoEnchantmentExtracted: No se han podido extraer todos los encantamientos. Tienes suficientes materiales/dinero para ello?
     SomeEnchantmentExtracted: No se han podido extraer algunos encantamientos. Tienes suficientes materiales/dinero para ello?
     NoEnchantmentInItem: Este objeto no tiene ningun encantamiento!
@@ -30,3 +31,4 @@ messages:
     ConsoleError: No es un comando de consola!
     UpdateAvailableMessage: Hay una actualizacion disponible
     NoUpdateAvailableMessage: No hay actualizaciones disponibles
+    InvalidEnchantmentLevel: Nivel de encantamiento invalido. ¿Estás desencantando encantamientos vanilla?

@@ -44,130 +44,142 @@ public class Commands implements CommandExecutor {
                     //Boolean to check if the player can pay the disenchant
                     boolean allEnchantsRemoved = true;
 
+
                     //Check if the player has enough material for paying
                     if (enchantmentsSize != 0) {
                         //Iterate all the enchantments
                         for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
                             //Get both the enchantment type and the level of the enchantment
                             Enchantment enchantment = entry.getKey();
+
+                            int maxLevel = enchantment.getMaxLevel();
                             int level = entry.getValue();
 
-                            //Boolean to check if the extraction is available after the payment
-                            boolean paymentCompleted = false;
-                            double disenchantPrice = 0;
-                            String materialString = "";
-                            Material payMaterial = Material.AIR;
-                            int materialCost = 0;
+                            if(level <= maxLevel) {
+                                //Boolean to check if the extraction is available after the payment
+                                boolean paymentCompleted = false;
+                                double disenchantPrice = 0;
+                                String materialString = "";
+                                Material payMaterial = Material.AIR;
+                                int materialCost = 0;
 
-                            if (Main.isEconomyEnabled) {
-                                disenchantPrice = Main.plugin.getConfig().getDouble("disenchantPrice");
+                                if (Main.isEconomyEnabled) {
+                                    disenchantPrice = Main.plugin.getConfig().getDouble("disenchantPrice");
 
-                                //Check if the user has the money to pay the disenchantment
-                                if (Main.econ.has(p, disenchantPrice)) {
-                                    Main.econ.withdrawPlayer(p, disenchantPrice);
-                                    paymentCompleted = true;
-                                } else {
-                                    allEnchantsRemoved = false;
-                                }
-                            } else {
-                                int materialAmount = 0;
-
-                                materialString = Main.plugin.getConfig().getString("materialPayment");
-
-                                payMaterial = Material.getMaterial(materialString);
-
-                                if (payMaterial == null) {
-                                    //If not material found use the default
-                                    payMaterial = Material.DIAMOND;
-                                }
-
-
-                                for (int i = 0; i < items.length; i++) {
-                                    ItemStack item = items[i];
-
-                                    if (item != null && item.getType() == payMaterial) {
-                                        materialAmount += item.getAmount();
+                                    //Check if the user has the money to pay the disenchantment
+                                    if (Main.econ.has(p, disenchantPrice)) {
+                                        Main.econ.withdrawPlayer(p, disenchantPrice);
+                                        paymentCompleted = true;
+                                    } else {
+                                        allEnchantsRemoved = false;
                                     }
-                                }
-
-                                //Get the custom price if set
-                                int materialBasePrice = Main.plugin.getConfig().getInt("materialCustomPrice.basePrice");
-                                int perLevelPrice = Main.plugin.getConfig().getInt("materialCustomPrice.perLevelPrice");
-
-                                //If custom prices are set, use them, if not, use the default
-                                if (materialBasePrice > -1 && perLevelPrice > -1) {
-                                    materialCost = materialBasePrice + (perLevelPrice * level);
                                 } else {
-                                    materialCost = level + 1;
-                                }
+                                    int materialAmount = 0;
 
-                                //Check if the player can pay the disenchant with materials
-                                if ((materialCost <= materialAmount)) {
-                                    //Take the pay material out of the player
-                                    boolean paid = false;
-                                    int slotCounter = 0;
-                                    int materialPayRemaining = materialCost;
+                                    materialString = Main.plugin.getConfig().getString("materialPayment");
 
-                                    while (!paid && (slotCounter < items.length)) {
-                                        ItemStack item = items[slotCounter];
-                                        //Check if there is the payMaterial in that slot
+                                    payMaterial = Material.getMaterial(materialString);
+
+                                    if (payMaterial == null) {
+                                        //If not material found use the default
+                                        payMaterial = Material.DIAMOND;
+                                    }
+
+
+                                    for (int i = 0; i < items.length; i++) {
+                                        ItemStack item = items[i];
+
                                         if (item != null && item.getType() == payMaterial) {
+                                            materialAmount += item.getAmount();
+                                        }
+                                    }
 
-                                            int amountInSlot = item.getAmount();
+                                    //Get the custom price if set
+                                    int materialBasePrice = Main.plugin.getConfig().getInt("materialCustomPrice.basePrice");
+                                    int perLevelPrice = Main.plugin.getConfig().getInt("materialCustomPrice.perLevelPrice");
 
-                                            //If the amount of materials in the slot is superior to the amount of money to pay delete the materials and break the loop
-                                            if (amountInSlot > materialPayRemaining) {
-                                                amountInSlot -= materialPayRemaining;
+                                    //If custom prices are set, use them, if not, use the default
+                                    if (materialBasePrice > -1 && perLevelPrice > -1) {
+                                        materialCost = materialBasePrice + (perLevelPrice * level);
+                                    } else {
+                                        materialCost = level + 1;
+                                    }
 
-                                                item.setAmount(amountInSlot);
+                                    //Check if the player can pay the disenchant with materials
+                                    if ((materialCost <= materialAmount)) {
+                                        //Take the pay material out of the player
+                                        boolean paid = false;
+                                        int slotCounter = 0;
+                                        int materialPayRemaining = materialCost;
 
-                                                paid = true;
-                                            } else {
-                                                materialPayRemaining -= amountInSlot;
-                                                item.setAmount(0);
+                                        while (!paid && (slotCounter < items.length)) {
+                                            ItemStack item = items[slotCounter];
+                                            //Check if there is the payMaterial in that slot
+                                            if (item != null && item.getType() == payMaterial) {
+
+                                                int amountInSlot = item.getAmount();
+
+                                                //If the amount of materials in the slot is superior to the amount of money to pay delete the materials and break the loop
+                                                if (amountInSlot > materialPayRemaining) {
+                                                    amountInSlot -= materialPayRemaining;
+
+                                                    item.setAmount(amountInSlot);
+
+                                                    paid = true;
+                                                } else {
+                                                    materialPayRemaining -= amountInSlot;
+                                                    item.setAmount(0);
+                                                }
                                             }
+
+                                            slotCounter++;
                                         }
 
-                                        slotCounter++;
+                                        paymentCompleted = true;
+
+                                        enchantmentsCounter--;
+                                    } else {
+                                        allEnchantsRemoved = false;
                                     }
-
-                                    paymentCompleted = true;
-
-                                    enchantmentsCounter--;
-                                } else {
-                                    allEnchantsRemoved = false;
                                 }
+
+                                if (paymentCompleted) {
+                                    //Remove the enchantment from the item
+
+                                    itemInMainHand.removeEnchantment(enchantment);
+
+
+                                    //Create the enchanted book item
+                                    ItemStack enchantedBook = new ItemStack(Material.ENCHANTED_BOOK);
+
+                                    ItemMeta meta = enchantedBook.getItemMeta();
+
+                                    //Get the enchantmentStorageMeta
+                                    if (meta instanceof EnchantmentStorageMeta) {
+                                        //Add the enchantment to the item meta
+                                        EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) meta;
+                                        enchantmentStorageMeta.addStoredEnchant(enchantment, level, false);
+                                    }
+                                    //Give the meta to the item
+                                    enchantedBook.setItemMeta(meta);
+                                    //Drop the item
+                                    p.getWorld().dropItem(p.getLocation(), enchantedBook);
+
+                                }
+                            } else {
+
+                                allEnchantsRemoved = false;
+                                p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
+                                        ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "InvalidEnchantmentLevel"));
+
                             }
 
-                            if (paymentCompleted) {
-                                //Remove the enchantment from the item
-
-                                itemInMainHand.removeEnchantment(enchantment);
-
-
-                                //Create the enchanted book item
-                                ItemStack enchantedBook = new ItemStack(Material.ENCHANTED_BOOK);
-
-                                ItemMeta meta = enchantedBook.getItemMeta();
-
-                                //Get the enchantmentStorageMeta
-                                if (meta instanceof EnchantmentStorageMeta) {
-                                    //Add the enchantment to the item meta
-                                    EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) meta;
-                                    enchantmentStorageMeta.addStoredEnchant(enchantment, level, false);
-                                }
-                                //Give the meta to the item
-                                enchantedBook.setItemMeta(meta);
-                                //Drop the item
-                                p.getWorld().dropItem(p.getLocation(), enchantedBook);
-
-                            }
                         }
 
                         //Get the final message
                         if (allEnchantsRemoved) {
                             p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                                    ChatColor.GREEN +  Main.plugin.getConfig().getString(Main.languageMessagesString + "EnchantmentExtractionSucess"));
+                                    ChatColor.GREEN +  Main.plugin.getConfig().getString(Main.languageMessagesString + "EnchantmentExtractionSuccess"));
                         } else {
                             //No enchantment was extracted, the operation failed
                             if (enchantmentsCounter == enchantmentsSize) {
