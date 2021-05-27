@@ -12,7 +12,7 @@ public class Main extends JavaPlugin {
     public static Main plugin;
     public static Economy econ = null;
     public static boolean isEconomyEnabled = false;
-    public static boolean isEnchantmentSolutionEnabled = false;
+    public static String languageMessagesString = "";
 
     @Override
     public void onEnable() {
@@ -35,10 +35,20 @@ public class Main extends JavaPlugin {
                 }
             }
 
-            isEnchantmentSolutionEnabled = plugin.getServer().getPluginManager().isPluginEnabled("EnchantmentSolution");
 
-            if (isEnchantmentSolutionEnabled) {
-                plugin.getLogger().info("ES integration enabled");
+
+            plugin.getLogger().warning(this.getConfig().getString("messages.language"));
+
+            switch(this.getConfig().getString("messages.language")) {
+                case "eng":
+                    languageMessagesString = "messages.eng.";
+                    break;
+                case "esp":
+                    languageMessagesString = "messages.esp.";
+                    break;
+                default:
+                    languageMessagesString = "messages.eng.";
+                    break;
             }
 
             UpdateChecker checker = new UpdateChecker(this, 80315);

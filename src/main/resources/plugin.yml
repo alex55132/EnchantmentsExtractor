@@ -1,5 +1,5 @@
 name: EnchantmentsExtractor
-version: "1.3"
+version: "1.4"
 main: com.alexthecaster.EnchantmentsExtractor.Main.Main
 commands:
   disenchant:
@@ -8,4 +8,4 @@ commands:
 permissions:
   enchantmentsextractor.disenchant:
     description: Permission that allows the player to use the disenchant command
-softdepend: [EnchantmentSolution, Vault]
+softdepend: [Vault]

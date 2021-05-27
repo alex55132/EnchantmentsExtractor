@@ -1,4 +1,8 @@
 # Changelog
+## Version 1.4
+- Removed EnchantmentSolution support: This has been done in order to assure integrity of the plugin when using an ES version different than used for development.
+- Added custom messages and multiple language support (See config.yml)
+- Added a "failsafe" for when the user tries to disenchant an item enchanted with a non-vanilla level (Ex. Sharpness VI)
 ## Version 1.3
 - Version checker
 - EnchantmentSolution support added

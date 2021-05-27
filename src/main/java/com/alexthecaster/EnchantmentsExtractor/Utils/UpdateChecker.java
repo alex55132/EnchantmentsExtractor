@@ -1,5 +1,6 @@
 package com.alexthecaster.EnchantmentsExtractor.Utils;
 
+import com.alexthecaster.EnchantmentsExtractor.Main.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Consumer;
@@ -24,10 +25,10 @@ public class UpdateChecker {
     public void generateUpdateMessage(String version) {
         if (this.plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
             plugin.getServer().broadcastMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                    ChatColor.GREEN + "There is not a new update available.");
+                    ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "NoUpdateAvailableMessage"));
         } else {
             plugin.getServer().broadcastMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
-                    ChatColor.GREEN + "There is a new update available.");
+                    ChatColor.GREEN + Main.plugin.getConfig().getString(Main.languageMessagesString + "UpdateAvailableMessage"));
         }
     }
 

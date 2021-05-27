@@ -21,6 +21,9 @@ for the extracion.
 - ~~Custom price for the extractions~~ Implemented in 1.2
 - ~~Vault integration (For using money instead of materials)~~ Implemented in 1.1 :)
 - ~~Add support for non vanilla enchantment plugins (Referred in [#2](https://github.com/alex55132/EnchantmentsExtractor/issues/2))~~ Implemented in 1.3
+- ~~Custom messages~~ Implemented in 1.4
+- ~~Multi-language support~~ Implemented in 1.4
+-  ~~Failsafe for when trying to extract non-vanilla enchants (Referred in [#4](https://github.com/alex55132/EnchantmentsExtractor/issues/4))~~ Implemented in 1.4
 - Ingame prices editor
 
 ## Previous versions support
@@ -55,6 +58,8 @@ Do you want to extend the plugin functionality? Great! In this section I'll expl
 work, so let's begin!
 
 The [VaultAPI](https://github.com/MilkBowl/VaultAPI) is used in order to enable the Economy usage. 
-[EnchantmentSolution](https://www.spigotmc.org/resources/enchantment-solution.59556/) plugin is needed too in order to enable the ES support.
 
-VaultAPI and Spigot API is available through Maven (See pom.xml). Nevertheless, to install the ES plugin you need to download the .jar and add it to the project as an external library. 
+VaultAPI and Spigot API is available through Maven (See pom.xml).
+
+## Language adition:
+In order to add a new language to the list just add the messages to the config.yml file and open a pull request indicating the language and its abbreviation
