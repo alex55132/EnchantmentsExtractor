@@ -37,6 +37,7 @@ Legend:
  - In development: 🕐 
  
 Minecraft server versions:
+ - 1.20: ✅
  - 1.19: ✅
  - 1.18: ✅
  - 1.17: ✅
@@ -66,3 +67,17 @@ VaultAPI and Spigot API is available through Maven (See pom.xml).
 
 ## Language adition:
 In order to add a new language to the list just add the messages to the config.yml file and open a pull request indicating the language and its abbreviation
+
+## Special items
+Some items are not recognized as normal materials but as materials with data info. In order to maintain the simple structure of the config field, a mapper has been created.
+The following values will be the ones that you have to add to your config file whenever you want to use them as payment material:
+ - LAPIS_LAZULI
+ - PURPLE_DYE
+ - CYAN_DYE
+ - LIGHT_GRAY_DYE
+ - GRAY_DYE
+ - PINK_DYE
+ - LIME_DYE
+ - LIGHT_BLUE_DYE
+ - MAGENTA_DYE
+ - ORANGE_DYE

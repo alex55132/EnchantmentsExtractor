@@ -1,4 +1,8 @@
 # Changelog
+## Version 1.5
+- Added an error message when an invalid material is set for payments
+- Added a custom mapper so materials that comes from dye are recognized without additional data
+- Added api-version in plugin.yml, which could be the reason why the plugin was not working in Paper
 ## Version 1.4
 - Removed EnchantmentSolution support: This has been done in order to assure integrity of the plugin when using an ES version different than used for development.
 - Added custom messages and multiple language support (See config.yml)
