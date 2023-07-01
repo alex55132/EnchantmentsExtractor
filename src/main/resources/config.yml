@@ -22,6 +22,7 @@ messages:
     UpdateAvailableMessage: There is a new update available.
     NoUpdateAvailableMessage: There is not a new update available.
     InvalidEnchantmentLevel: Invalid enchantment level (Are you disenchanting vanilla enchantments?)
+    InvalidMaterialError: The provided material payment is not valid, defaulting to diamonds
   esp:
     EnchantmentExtractionSuccess: Encantamientos extraidos!
     NoEnchantmentExtracted: No se han podido extraer todos los encantamientos. Tienes suficientes materiales/dinero para ello?
@@ -32,3 +33,4 @@ messages:
     UpdateAvailableMessage: Hay una actualizacion disponible
     NoUpdateAvailableMessage: No hay actualizaciones disponibles
     InvalidEnchantmentLevel: Nivel de encantamiento invalido. ¿Estás desencantando encantamientos vanilla?
+    InvalidMaterialError: El material indicado no es válido, usando diamantes...

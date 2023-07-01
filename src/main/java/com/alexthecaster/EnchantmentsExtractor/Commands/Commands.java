@@ -1,6 +1,7 @@
 package com.alexthecaster.EnchantmentsExtractor.Commands;
 
 import com.alexthecaster.EnchantmentsExtractor.Main.Main;
+import com.alexthecaster.EnchantmentsExtractor.Utils.SpecialItemsMapper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -77,10 +78,22 @@ public class Commands implements CommandExecutor {
                                     int materialAmount = 0;
 
                                     materialString = Main.plugin.getConfig().getString("materialPayment");
+                                    SpecialItemsMapper specialItemsMapper = new SpecialItemsMapper();
 
-                                    payMaterial = Material.getMaterial(materialString);
+                                    Material specialMaterial = specialItemsMapper.getSpecialMaterial(materialString);
+
+                                    if(specialMaterial != null) {
+                                        payMaterial = specialMaterial;
+                                    } else {
+                                        payMaterial = Material.getMaterial(materialString);
+                                    }
+
+
 
                                     if (payMaterial == null) {
+                                        p.sendMessage(ChatColor.YELLOW + "[" + ChatColor.AQUA + "EnchantmentsExtractor" + ChatColor.YELLOW + "] " +
+                                                ChatColor.GREEN +  Main.plugin.getConfig().getString(Main.languageMessagesString + "InvalidMaterialError"));
+
                                         //If not material found use the default
                                         payMaterial = Material.DIAMOND;
                                     }
